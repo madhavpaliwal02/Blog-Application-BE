@@ -3,6 +3,7 @@ package com.blog.blog_application.serviceImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.blog.blog_application.exception.ResourceNotFoundException;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
+    private final ModelMapper modelMapper;
 
     /* Add a user */
     @Override
@@ -65,31 +67,35 @@ public class UserServiceImpl implements UserService {
         this.userRepo.delete(oldUser);
     }
 
+    /* /////////////////////////// Helper Function /////////////////////////// */
+
     /* Helper Function: Get user */
     public User getUserHelper(int id) {
         return this.userRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User ", " id ", id));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
 
     /* Helper Function: User -> UserDto */
     private UserDto mapToUserDto(User user) {
-        return UserDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .about(user.getAbout())
-                .build();
+        return this.modelMapper.map(user, UserDto.class);
+        // return UserDto.builder()
+        // .id(user.getId())
+        // .name(user.getName())
+        // .email(user.getEmail())
+        // .password(user.getPassword())
+        // .about(user.getAbout())
+        // .build();
     }
 
     /* Helper Function: UserDto -> User */
     public User mapToUser(UserDto userDto) {
-        return User.builder()
-                .name(userDto.getName())
-                .email(userDto.getEmail())
-                .password(userDto.getPassword())
-                .about(userDto.getAbout())
-                .build();
+        return this.modelMapper.map(userDto, User.class);
+        // return User.builder()
+        // .name(userDto.getName())
+        // .email(userDto.getEmail())
+        // .password(userDto.getPassword())
+        // .about(userDto.getAbout())
+        // .build();
     }
 
 }

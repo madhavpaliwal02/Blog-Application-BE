@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blog.blog_application.payloads.ApiResponse;
 import com.blog.blog_application.payloads.UserDto;
 import com.blog.blog_application.serviceImpl.services.UserService;
 
@@ -36,26 +37,28 @@ public class UserCtrl {
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUser() {
         List<UserDto> list = this.userService.getAllUsers();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        return ResponseEntity.ok(list);
     }
 
     /* Get a user */
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable("id") int id) {
         UserDto user = this.userService.getUser(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return ResponseEntity.ok(user);
     }
 
     /* Update a user */
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("id") int id, @RequestBody UserDto userDto) {
         UserDto user = this.userService.updateUser(userDto, id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return ResponseEntity.ok(user);
     }
 
     /* Delete a user */
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable("id") int id) {
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable("id") int id) {
         this.userService.deleteUser(id);
+        return new ResponseEntity<ApiResponse>(new ApiResponse("User Successfully Deleted...", true), HttpStatus.OK);
+    
     }
 }
