@@ -17,6 +17,7 @@ import com.blog.blog_application.payloads.ApiResponse;
 import com.blog.blog_application.payloads.UserDto;
 import com.blog.blog_application.serviceImpl.services.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,7 +29,7 @@ public class UserCtrl {
 
     /* Add a user */
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto) {
         UserDto user = this.userService.addUser(userDto);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
