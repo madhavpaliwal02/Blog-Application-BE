@@ -15,11 +15,12 @@ import lombok.NoArgsConstructor;
 public class UserDto {
     private int id;
 
-    @NotEmpty
+    @NotEmpty(message = "Name must not be empty")
     @Size(min = 3, message = "Name must be more than 3 characters")
     private String name;
 
-    @Email
+    @NotEmpty(message = "Email is required")
+    @Email(message = "Email is not valid")
     private String email;
 
     @NotEmpty
