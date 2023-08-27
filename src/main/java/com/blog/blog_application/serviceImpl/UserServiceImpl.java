@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import com.blog.blog_application.exception.ResourceNotFoundException;
 import com.blog.blog_application.exception.UserException;
 import com.blog.blog_application.model.User;
 import com.blog.blog_application.payloads.UserDto;

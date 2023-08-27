@@ -1,18 +1,17 @@
 package com.blog.blog_application.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -20,22 +19,29 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 @Entity
-@Table(name = "t_category")
-public class Category {
-
+@Table(name = "t_post")
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int categoryId;
+    private int postId;
 
-    @Column(name = "category_title", nullable = false, length = 100)
+    @Column(name = "post_title", nullable = false, length = 100)
     private String title;
 
-    @Column(name = "category_description")
-    private String description;
+    @Column(length = 10000)
+    private String content;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Post> post = new ArrayList<>();
+    private String imageName;
 
+    private Date addedDate;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    private User user;
 }
