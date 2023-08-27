@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 public class PostDto {
 
-    private int id;
+    private int postId;
 
     @NotEmpty(message = "Title must not be empty")
     @Size(min = 3, message = "Title atleast have 3 letters")

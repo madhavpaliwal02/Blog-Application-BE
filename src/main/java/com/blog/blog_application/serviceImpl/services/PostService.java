@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.blog.blog_application.exception.PostException;
 import com.blog.blog_application.payloads.PostDto;
+import com.blog.blog_application.payloads.PostResponse;
 
 public interface PostService {
 
@@ -11,7 +12,7 @@ public interface PostService {
     public PostDto createPost(PostDto postDto, int userId, int catId) throws PostException;
 
     // get All post
-    public List<PostDto> getAllPost() throws PostException;
+    public PostResponse getAllPost(int pageNumber, int pageSize, String sortBy, String sortDir) throws PostException;
 
     // get post by id
     public PostDto getPostById(int id) throws PostException;
@@ -29,5 +30,5 @@ public interface PostService {
     public List<PostDto> findByCategory(int catId) throws PostException;
 
     // get posts by search
-    public List<PostDto> findBySearch(String search) throws PostException;
+    public List<PostDto> findBySearch(String keyword) throws PostException;
 }

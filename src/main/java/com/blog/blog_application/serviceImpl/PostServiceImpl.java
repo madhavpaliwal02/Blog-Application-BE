@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.blog.blog_application.exception.PostException;
@@ -13,6 +17,7 @@ import com.blog.blog_application.model.Category;
 import com.blog.blog_application.model.Post;
 import com.blog.blog_application.model.User;
 import com.blog.blog_application.payloads.PostDto;
+import com.blog.blog_application.payloads.PostResponse;
 import com.blog.blog_application.repositories.CategoryRepo;
 import com.blog.blog_application.repositories.PostRepo;
 import com.blog.blog_application.repositories.UserRepo;
@@ -65,10 +70,29 @@ public class PostServiceImpl implements PostService {
 
     // Get all post
     @Override
-    public List<PostDto> getAllPost() throws PostException {
-        List<PostDto> list = this.postRepo.findAll().stream().map((post) -> this.mapToDto(post))
+    public PostResponse getAllPost(int pageNumber, int pageSize, String sortBy, String sortDir) throws PostException {
+        // List<PostDto> list = this.postRepo.findAll().stream().map((post) ->
+        // this.mapToDto(post))
+        // .collect(Collectors.toList());
+        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        Pageable p = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Post> pagePost = this.postRepo.findAll(p);
+        List<PostDto> postDtos = pagePost.getContent().stream().map((post) -> this.mapToDto(post))
                 .collect(Collectors.toList());
-        return list;
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(postDtos); // List of PostDto
+
+        postResponse.setPageNumber(pagePost.getNumber()); // Curr page no
+        postResponse.setPageSize(pagePost.getSize()); // Page size
+
+        postResponse.setTotalElements(pagePost.getTotalElements()); // Total elements
+        postResponse.setTotalPage(pagePost.getTotalPages()); // Total page
+
+        postResponse.setLastPage(pagePost.isLast()); // Is last page
+
+        return postResponse;
     }
 
     // Get Post By Id
@@ -87,7 +111,7 @@ public class PostServiceImpl implements PostService {
         Post oldPost = this.getPostHelper(id);
         oldPost.setTitle(postDto.getTitle());
         oldPost.setContent(postDto.getContent());
-        if (!(postDto.getImageName()==null || postDto.getImageName().equals("")))
+        if (!(postDto.getImageName() == null || postDto.getImageName().equals("")))
             oldPost.setImageName(postDto.getImageName());
 
         // saving and returning
@@ -124,8 +148,10 @@ public class PostServiceImpl implements PostService {
 
     // Find posts by search keyword
     @Override
-    public List<PostDto> findBySearch(String search) throws PostException {
-        return null;
+    public List<PostDto> findBySearch(String keyword) throws PostException {
+        List<PostDto> list = this.postRepo.findByTitleContaining(keyword).stream().map((post) -> this.mapToDto(post))
+                .collect(Collectors.toList());
+        return list;
     }
 
     /* Helper get Post */

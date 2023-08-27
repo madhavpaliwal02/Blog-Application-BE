@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blog.blog_application.exception.PostException;
 import com.blog.blog_application.payloads.PostDto;
+import com.blog.blog_application.payloads.PostResponse;
 import com.blog.blog_application.serviceImpl.services.PostService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,9 +38,14 @@ public class PostCtrl {
 
     // Get All Posts
     @GetMapping("/post")
-    public ResponseEntity<List<PostDto>> getAllPostHandler() throws PostException {
-        List<PostDto> list = this.postService.getAllPost();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+    public ResponseEntity<PostResponse> getAllPostHandler(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "2", required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "postId", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir)
+            throws PostException {
+        PostResponse postResponse = this.postService.getAllPost(pageNumber, pageSize, sortBy, sortDir);
+        return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
 
     // Get Post By Id
@@ -59,6 +66,14 @@ public class PostCtrl {
     @GetMapping("/category/{catId}/post")
     public ResponseEntity<List<PostDto>> getPostByCategoryHandler(@PathVariable("catId") int id) throws PostException {
         List<PostDto> list = this.postService.findByCategory(id);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    // Get all posts by search : title
+    @GetMapping("/post/search/{keyword}")
+    public ResponseEntity<List<PostDto>> getPostByKeywordHandler(@PathVariable("keyword") String keyword)
+            throws PostException {
+        List<PostDto> list = this.postService.findBySearch(keyword);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
