@@ -40,4 +40,10 @@ public class GlobalExceptionHandler {
         ErrorDetails error = new ErrorDetails(ue.getMessage(), req.getDescription(false), LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(PostException.class)
+    public ResponseEntity<ErrorDetails> postExceptionHandler(PostException pe, WebRequest req) {
+        ErrorDetails error = new ErrorDetails(pe.getMessage(), req.getDescription(false), LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }
